@@ -31,3 +31,4 @@ def get_similarities(text: str):
     response["Similarity"] = similarities.values
 
     return response
+    
