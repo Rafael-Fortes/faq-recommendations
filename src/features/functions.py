@@ -4,6 +4,8 @@ import torch
 import spacy
 from sentence_transformers import SentenceTransformer, util
 
+import re
+
 
 def get_similarity(model, embeddings, text):
     text_embed = model.encode(text)
@@ -17,15 +19,15 @@ def get_similarity(model, embeddings, text):
     return pd.Series(similarities).astype(float)
 
 
-def remove_stop_words(model, text:str):
+def get_clean_text(model, text:str):
     text_tokens = model(text)
 
-    words_without_stopwords = []
+    clean_text = []
 
     for token in text_tokens:
-        if not token.is_stop:
-            words_without_stopwords.append(token.text)
-    
-    text_without_stopwords = " ".join(words_without_stopwords)
+        if not token.is_stop and not token.is_punct:
+            clean_text.append(token.lemma_)
 
-    return text_without_stopwords
+    clean_text = " ".join(clean_text)
+
+    return re.sub(r'[^a-zA-Z\s]', '', clean_text).lower()

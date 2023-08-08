@@ -24,8 +24,8 @@ def home():
 
 @app.get("/get_similarities/{text}")
 def get_similarities(text: str):
-    text_without_stop_words = functions.remove_stop_words(nlp_model, text)
-    similarities = functions.get_similarity(embed_model, embeddings, text_without_stop_words)
+    text_preprocessed = functions.get_clean_text(nlp_model, text)
+    similarities = functions.get_similarity(embed_model, embeddings, text_preprocessed)
 
     response = faq.copy()
     response["Similarity"] = similarities.values
