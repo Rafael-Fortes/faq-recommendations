@@ -26,8 +26,8 @@ def get_clean_text(model, text:str):
 
     for token in text_tokens:
         if not token.is_stop and not token.is_punct:
-            clean_text.append(token.lemma_)
+            clean_text.append(token.text)
 
     clean_text = " ".join(clean_text)
 
-    return re.sub(r'[^a-zA-Z\s]', '', clean_text).lower()
+    return re.sub(r'[^a-zA-ZÀ-ÿ\s]', '', clean_text).lower()
