@@ -29,18 +29,20 @@ para o atendente qual seria a resposta adequada para passar para o cliente.
 ### Configurando o ambiente
 
 1. Clone este repositório utilizando o comando `git clone https://github.com/Rafael-Fortes/faq-recommendations`
-2. Vá para a pasta do projeto e crie um ambiente virtual utilizando o comando `python -m venv venv`
-3. Ative o ambiente virtual utilizando o comando `./venv/scripts/activate`
-4. instale os requisitos utilizando o comando `pip install -r requirements.txt`
+2. Navegue até a pasta faq-recommendations utilizando o comando `cd faq-recommendations`
+3. Crie um ambiente virtual utilizando o comando `python -m venv venv`
+4. Ative o ambiente virtual utilizando o comando `./venv/scripts/activate`
+5. instale os requisitos utilizando o comando `pip install -r requirements.txt`
 
 ### Baixando os Modelos necessários
-1. Entre na pasta src/models/
+1. Utilize o comando `cd src/models` para navegar até a pasta models
 2. Execute o comando `python -m spacy download pt_core_news_sm` para baixar o modelo NLP para processamento de texto
 3. Utilize o comando `git clone https://huggingface.co/neuralmind/bert-large-portuguese-cased` para baixar o modelo de embeddings
 
 # Executando a API
 1. Certifique-se de que o ambiente virtual está ativado
-2. Utilize o comando `uvicorn main:app` para iniciar a API que estará sendo executada na URL: http://127.0.0.1:8000/
+2. Utilize o comando `cd src` para navegar até a pasta src
+3. Utilize o comando `uvicorn main:app` para iniciar a API que estará sendo executada na URL: http://127.0.0.1:8000/
 
 ## Como fazer requisições à API
 para fazer as requisições basta entrar na seguinte URL:`http://127.0.0.1:8000/get_similarities/{seu texto vai aqui}`, no qual será retornado um JSON com as recomendações do FAQ.
