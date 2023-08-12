@@ -3,16 +3,20 @@ from fastapi import FastAPI
 import pandas as pd
 import numpy as np
 import spacy
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, util, models
 
-import functions
+from features import functions
 
 
-embeddings = pd.read_csv("../data/Embeddings.csv", sep=";")
-faq = pd.read_csv("../data/FAQ_example.csv", sep=";")
+word_embedding_model = models.Transformer("models/bert-large-portuguese-cased")
+pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
 
-embed_model = SentenceTransformer("../models/embeddings_model")
-nlp_model = spacy.load("../models/nlp_model")
+embed_model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
+nlp_model = spacy.load("pt_core_news_sm")
+
+embeddings = pd.read_csv("data/Embeddings.csv", sep=";")
+faq = pd.read_csv("data/FAQ_example.csv", sep=";")
+
 
 app = FastAPI()
 
