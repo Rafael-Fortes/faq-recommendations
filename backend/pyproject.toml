@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = "backend for faq recommendations app"
+authors = ["rafaeldsfortes@gmail.com"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+fastapi = {extras = ["standard"], version = ">=0.115.11,<0.116.0"}
+transformers = ">=4.49.0,<5.0.0"
+sentence-transformers = ">=3.4.1,<4.0.0"
+pymongo = ">=4.6.0,<5.0.0"
+python-multipart = ">=0.0.9,<0.1.0"
+pandas = ">=2.2.3,<3.0.0"
+python-dotenv = ">=1.0.1,<2.0.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
