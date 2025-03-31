@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, File, Form
 from fastapi import UploadFile
-from app.schemas.gestion_schemas import IngestFaqResponse, FaqImportData, FaqListResponse, FaqDetailResponse
+from app.schemas.gestion_schemas import IngestFaqResponse, FaqImportData, FaqListResponse, FaqDetailResponse, CreateFaqResponse, CreateFaqRequest, AddFaqItemResponse, AddFaqItemRequest
 from app.services.gestion_service import GestionService
 import json
 
@@ -49,6 +49,61 @@ async def import_faq(
             detail=f"Failed to import FAQ: {str(e)}"
         )
 
+@router.post("/faq", response_model=CreateFaqResponse, status_code=status.HTTP_201_CREATED)
+async def create_faq(request: CreateFaqRequest):
+    """
+    Create a new FAQ collection.
+    
+    - **client_name**: Name of the client
+    - **faq_name**: Name of the FAQ to be created
+    - **description**: Optional description of the FAQ
+    """
+    try:
+        result = await gestion_service.create_faq(
+            request.client_name,
+            request.faq_name,
+            request.description
+        )
+        return CreateFaqResponse(
+            message=f"FAQ '{request.faq_name}' successfully created",
+            data=result
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create FAQ: {str(e)}"
+        )
+
+@router.post("/faq/{faq_name}/items", response_model=AddFaqItemResponse, status_code=status.HTTP_201_CREATED)
+async def add_faq_item(
+    faq_name: str,
+    request: AddFaqItemRequest,
+    client_name: str
+):
+    """
+    Add a new item to an existing FAQ.
+    
+    - **faq_name**: Name of the FAQ to add the item to
+    - **client_name**: Name of the client
+    - **request**: The FAQ item to add (question and answer)
+    """
+    try:
+        result = await gestion_service.add_faq_item(
+            client_name,
+            faq_name,
+            request.question,
+            request.answer
+        )
+        return AddFaqItemResponse(
+            message=f"Item successfully added to FAQ '{faq_name}'",
+            data=result
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to add FAQ item: {str(e)}"
+        )
+
 @router.get("/faq", response_model=FaqListResponse)
 async def list_faqs(client_name: str):
     """
@@ -57,7 +112,7 @@ async def list_faqs(client_name: str):
     - **client_name**: Name of the client to retrieve FAQs from
     """
     try:
-        faqs = await gestion_service.list_faqs(client_name)
+        faqs = await gestion_service.list_faqs(client_name.lower())
         return FaqListResponse(
             message="FAQs retrieved successfully",
             data=faqs

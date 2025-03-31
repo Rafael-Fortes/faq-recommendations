@@ -88,6 +88,13 @@ class GestionService:
             with get_db(client_name) as db:
                 # Check if client exists
                 client_exists = self.gestion_repository.verify_collection_exists(db, client_name)
+                
+                log = {
+                    "client_name": client_name,
+                    "client_exists": client_exists
+                }
+                print(log)
+
                 if not client_exists:
                     raise HTTPException(status_code=404, detail="Client not found")
                 
@@ -103,4 +110,67 @@ class GestionService:
         except Exception as e:
             print(f"Error in list_faqs: {str(e)}")
             raise HTTPException(status_code=500, detail="Error while listing FAQs")
+            
+    async def create_faq(self, client_name: str, faq_name: str, description: Optional[str] = None) -> Dict[str, Any]:
+        """Create a new FAQ collection"""
+        try:
+            with get_db(client_name) as db:
+                # Check if FAQ already exists
+                if self.gestion_repository.verify_collection_exists(db, faq_name):
+                    raise HTTPException(status_code=400, detail=f"FAQ '{faq_name}' already exists")
+                
+                # Create metadata entry
+                metadata = {
+                    "name": faq_name,
+                    "description": description,
+                    "count": 0,
+                    "created_at": pd.Timestamp.now(),
+                    "updated_at": pd.Timestamp.now()
+                }
+                self.gestion_repository.insert_one_dict(db, "faq_metadata", metadata)
+                
+                return metadata
+                
+        except HTTPException as he:
+            raise he
+        except Exception as e:
+            print(f"Error in create_faq: {str(e)}")
+            raise HTTPException(status_code=500, detail="Error while creating FAQ")
+
+    async def add_faq_item(self, client_name: str, faq_name: str, question: str, answer: str) -> Dict[str, Any]:
+        """Add a new item to an existing FAQ"""
+        try:
+            with get_db(client_name) as db:
+                # Check if FAQ exists
+                if not self.gestion_repository.verify_collection_exists(db, faq_name):
+                    raise HTTPException(status_code=404, detail=f"FAQ '{faq_name}' not found")
+                
+                # Generate embedding for the question
+                question_embedding = self.semantic_engine.embed_text(question)
+                
+                # Create FAQ item
+                faq_item = {
+                    "question": question,
+                    "answer": answer,
+                    "embedding": question_embedding
+                }
+                
+                # Insert the item
+                self.gestion_repository.insert_one_dict(db, faq_name, faq_item)
+                
+                # Update metadata count
+                self.gestion_repository.update_one(
+                    db,
+                    "faq_metadata",
+                    {"name": faq_name},
+                    {"$inc": {"count": 1}, "$set": {"updated_at": pd.Timestamp.now()}}
+                )
+                
+                return faq_item
+                
+        except HTTPException as he:
+            raise he
+        except Exception as e:
+            print(f"Error in add_faq_item: {str(e)}")
+            raise HTTPException(status_code=500, detail="Error while adding FAQ item")
             

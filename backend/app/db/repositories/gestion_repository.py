@@ -29,3 +29,9 @@ class GestionRepository(DBRepository):
             return db[collection_name].find(query)
         except Exception as e:
             raise e
+
+    def update_one(self, db: MongoClient, collection_name: str, query: dict, update: dict):
+        try:
+            db[collection_name].update_one(query, update)
+        except Exception as e:
+            raise e
