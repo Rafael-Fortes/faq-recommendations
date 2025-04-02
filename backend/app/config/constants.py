@@ -3,9 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MONGO_URI = os.environ.get("MONGO_URI")
+QDRANT_URL = os.environ.get("QDRANT_URL")
 
-
-if not MONGO_URI:
-    raise ValueError("MONGO_URI is not set")
+if not QDRANT_URL:
+    raise ValueError("QDRANT_URL is not set in the environment variables")
 

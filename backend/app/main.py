@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from app.routes import gestion_routes
 from dotenv import load_dotenv
+from app.utils.logger import Logger
 
 load_dotenv()
 
+Logger.info("Starting the application")
 app = FastAPI()
 
+
 app.include_router(gestion_routes.router)
+Logger.info("Application started")

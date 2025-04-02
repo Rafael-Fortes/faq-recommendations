@@ -1,12 +1,13 @@
-from pymongo import MongoClient
-from app.config.constants import MONGO_URI
+from qdrant_client import QdrantClient
+from app.config import constants
 from contextlib import contextmanager
-
+from app.utils.logger import Logger
 
 @contextmanager
-def get_db(db_name: str):
-    client = MongoClient(MONGO_URI)
-    db = client[db_name]
-    yield db
+def get_qdrant_client():
+    Logger.info("Getting Qdrant client")
+    client = QdrantClient(url=constants.QDRANT_URL)
+    Logger.info("Qdrant client retrieved successfully")
+    yield client
+    Logger.info("Closing Qdrant client")
     client.close()
-

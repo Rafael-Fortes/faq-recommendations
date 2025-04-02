@@ -36,8 +36,7 @@ alwaysApply: true
   Dependencies
   - FastAPI
   - Pydantic v2
-  - Async database libraries like asyncpg or aiomysql
-  - Pymongo
+  - Qdrant
   
   FastAPI-Specific Guidelines
   - Use classes with methods for modularization and Pydantic models for input validation and response schemas.

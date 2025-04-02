@@ -1,29 +1,21 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, AfterValidator
 from app.schemas.base_schemas import BaseResponse
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Annotated
+from enum import Enum
 
 
-class ClientName(Field):
-    client_name: str
-
-    @field_validator('client_name')
-    def validate_client_name(cls, v):
-        if not v:
-            raise ValueError('Client name is required')
-        return v
-
-class FaqName(Field):
-    faq_name: str
-
-@field_validator('faq_name')
-def validate_faq_name(cls, v):
+def normalize_text(v: str) -> str:
+    """Normalize text by stripping whitespace and lowercasing"""
     if not v:
-        raise ValueError('FAQ name is required')
-    return v
+        raise ValueError("Field is required")
+    return v.strip().lower()
+
+
+NormalizedText = Annotated[str, AfterValidator(normalize_text)]
 
 
 class FaqImportData(BaseModel):
-    faq_name: FaqName
+    faq_name: NormalizedText
     filename: str
     count: Optional[int] = None
 
@@ -31,35 +23,32 @@ class FaqImportData(BaseModel):
 class IngestFaqResponse(BaseResponse):
     data: FaqImportData = Field(default_factory=dict)
 
-
-class FaqMetadata(BaseModel):
-    name: str
-    count: int
-    created_at: str
-    updated_at: str
-
-
 class FaqItem(BaseModel):
     question: str
     answer: str
     embedding: Optional[List[float]] = None
 
+
 class FaqListRequest(BaseModel):
-    client_name: ClientName
+    client_name: NormalizedText
 
 
 class FaqListResponse(BaseResponse):
-    data: List[FaqMetadata] = Field(default_factory=list)
+    data: List[dict] = Field(default_factory=list)
 
 
 class FaqDetailResponse(BaseResponse):
     data: Dict[str, List[FaqItem]] = Field(default_factory=dict)
 
 
+class Distance(str, Enum):
+    COSINE = "cosine"
+    EUCLIDEAN = "euclidean"
+
+
 class CreateFaqRequest(BaseModel):
-    client_name: str
-    faq_name: str
-    description: Optional[str] = None
+    faq_name: NormalizedText = Field(..., description="The name of the FAQ")
+    distance: Distance = Field("cosine", description="The distance metric")
 
 
 class AddFaqItemRequest(BaseModel):
@@ -68,7 +57,7 @@ class AddFaqItemRequest(BaseModel):
 
 
 class CreateFaqResponse(BaseResponse):
-    data: FaqMetadata = Field(default_factory=dict)
+    data: Dict = Field(default_factory=dict)
 
 
 class AddFaqItemResponse(BaseResponse):
