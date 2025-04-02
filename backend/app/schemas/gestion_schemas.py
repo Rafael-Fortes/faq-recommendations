@@ -14,31 +14,17 @@ def normalize_text(v: str) -> str:
 NormalizedText = Annotated[str, AfterValidator(normalize_text)]
 
 
-class FaqImportData(BaseModel):
-    faq_name: NormalizedText
-    filename: str
-    count: Optional[int] = None
-
-
-class IngestFaqResponse(BaseResponse):
-    data: FaqImportData = Field(default_factory=dict)
-
 class FaqItem(BaseModel):
     question: str
     answer: str
     embedding: Optional[List[float]] = None
 
 
-class FaqListRequest(BaseModel):
-    client_name: NormalizedText
-
-
-class FaqListResponse(BaseResponse):
-    data: List[dict] = Field(default_factory=list)
-
-
-class FaqDetailResponse(BaseResponse):
-    data: Dict[str, List[FaqItem]] = Field(default_factory=dict)
+class FaqListItem(BaseModel):
+    """Schema for FAQ items without embeddings, for display purposes"""
+    question: str
+    answer: str
+    id: Optional[str] = None
 
 
 class Distance(str, Enum):
@@ -62,4 +48,30 @@ class CreateFaqResponse(BaseResponse):
 
 class AddFaqItemResponse(BaseResponse):
     data: FaqItem = Field(default_factory=dict)
+
+
+class FaqImportRequest(BaseModel):
+    faq_name: NormalizedText = Field(..., description="The name of the FAQ to import into")
+
+
+class FaqImportData(BaseModel):
+    faq_name: NormalizedText
+    filename: str
+    items_count: int = 0
+    failed_count: int = 0
+    status: str = "completed"
+
+
+class FaqImportResponse(BaseResponse):
+    data: FaqImportData = Field(default_factory=dict)
+
+
+class FaqImportProgressResponse(BaseResponse):
+    data: Dict = Field(default_factory=dict)
+
+
+class ReadFaqResponse(BaseResponse):
+    """Response schema for retrieving FAQ items"""
+    data: List[FaqListItem] = Field(default_factory=list)
+
 

@@ -1,6 +1,8 @@
 from qdrant_client import QdrantClient, models
 from app.config.constants import QDRANT_URL
 from app.utils.logger import Logger
+import uuid
+from typing import Dict, List, Any, Optional
 
 class QdrantRepository:
     def create_collection(self, client: QdrantClient, collection_name: str, vector_size: int, distance: str) -> None:
@@ -62,6 +64,93 @@ class QdrantRepository:
             return metadata
         except Exception as e:
             Logger.error(f"Error getting collection information for '{collection_name}': {str(e)}")
+            raise e
+    
+    def add_point(self, client: QdrantClient, collection_name: str, vector: List[float], payload: Dict[str, Any]) -> str:
+        try:
+            # First check if collection exists
+            Logger.info(f"Checking if collection '{collection_name}' exists before adding point")
+            if not self._check_collection_exists(client, collection_name):
+                Logger.error(f"Collection '{collection_name}' does not exist")
+                raise ValueError(f"Collection {collection_name} does not exist")
+            
+            # Generate a unique ID for the point
+            point_id = str(uuid.uuid4())
+            Logger.info(f"Adding point with ID '{point_id}' to collection '{collection_name}'")
+            
+            # Create the point
+            point = models.PointStruct(
+                id=point_id,
+                vector=vector,
+                payload=payload
+            )
+            
+            # Add the point to the collection
+            client.upsert(
+                collection_name=collection_name,
+                points=[point]
+            )
+            
+            Logger.info(f"Point '{point_id}' successfully added to collection '{collection_name}'")
+            return point_id
+            
+        except Exception as e:
+            Logger.error(f"Error adding point to collection '{collection_name}': {str(e)}")
+            raise e
+            
+    def get_points(self, client: QdrantClient, collection_name: str, limit: Optional[int] = None, offset: int = 0) -> List[Dict]:
+        """
+        Retrieve points from a collection with pagination
+        """
+        try:
+            Logger.info(f"Retrieving points from collection '{collection_name}'")
+            
+            # Check if collection exists
+            if not self._check_collection_exists(client, collection_name):
+                Logger.error(f"Collection '{collection_name}' does not exist")
+                raise ValueError(f"Collection {collection_name} does not exist")
+            
+            # Get collection info to determine the total number of points
+            collection_info = client.get_collection(collection_name)
+            total_points = collection_info.points_count
+            
+            # Determine the limit to use
+            if limit is None:
+                actual_limit = total_points
+            else:
+                actual_limit = min(limit, total_points - offset)
+                
+            if actual_limit <= 0:
+                Logger.info(f"No points to retrieve from collection '{collection_name}' with offset {offset}")
+                return []
+                
+            Logger.info(f"Retrieving {actual_limit} points from collection '{collection_name}' starting at offset {offset}")
+            
+            # Scroll through all points in the collection
+            points = []
+            scroll_result = client.scroll(
+                collection_name=collection_name,
+                limit=actual_limit,
+                offset=offset,
+                with_payload=True,
+                with_vectors=False  # We don't need the vectors for display
+            )
+            
+            # Extract the points from the scroll result
+            points = [
+                {
+                    "id": str(point.id),
+                    "question": point.payload.get("question", ""),
+                    "answer": point.payload.get("answer", "")
+                }
+                for point in scroll_result[0]
+            ]
+            
+            Logger.info(f"Successfully retrieved {len(points)} points from collection '{collection_name}'")
+            return points
+            
+        except Exception as e:
+            Logger.error(f"Error retrieving points from collection '{collection_name}': {str(e)}")
             raise e
         
         

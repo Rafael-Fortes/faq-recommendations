@@ -19,19 +19,19 @@ This document outlines the requirements for the FAQ Management functionality wit
 
 **User Stories (Detailed Requirements):**
 
-**Epic 1: FAQ Import**
+**Epic 1: Manual FAQ Addition**
+
+*   As an administrator, I want to be able to create a new FAQ with a descriptive title.
+*   As an administrator, I want to be able to add a new question and its respective answer to an existing FAQ.
+*   As an administrator, I want to have a rich text editor to format the FAQ answers (bold, italic, lists, etc.).
+
+**Epic 2: FAQ CSV Import**
 
 *   As an administrator, I want to be able to upload a CSV file containing the list of FAQs to quickly import a large number of questions and answers.
 *   As an administrator, I want the system to validate the CSV file format to ensure that the data is imported correctly.
 *   As an administrator, I want to receive feedback on the progress of the CSV file import.
 *   As an administrator, I want to receive an error report if the CSV file import fails.
-*   As an administrator, I want to be able to specify the name of the FAQ to be created (if it doesn't exist) or selected (if it already exists) during the import process.
-
-**Epic 2: Manual FAQ Addition**
-
-*   As an administrator, I want to be able to create a new FAQ with a descriptive title.
-*   As an administrator, I want to be able to add a new question and its respective answer to an existing FAQ.
-*   As an administrator, I want to have a rich text editor to format the FAQ answers (bold, italic, lists, etc.).
+*   As an administrator, I want to be able to specify the name of a FAQ that already exists during the import process to add the questions and answers to the existing FAQ.
 
 **Epic 3: FAQ Reading**
 
