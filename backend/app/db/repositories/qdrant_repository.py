@@ -157,6 +157,52 @@ class QdrantRepository:
             Logger.error(f"Error retrieving points from collection '{collection_name}': {str(e)}")
             raise e
         
-        
+    def list_collections(self, client: QdrantClient) -> List[str]:
+        """
+        Get a list of all collection names
+        """
+        try:
+            Logger.info("Retrieving list of all collections")
+            collections = client.get_collections().collections
+            collection_names = [collection.name for collection in collections]
+            Logger.info(f"Retrieved {len(collection_names)} collections")
+            return collection_names
+        except Exception as e:
+            Logger.error(f"Error retrieving collections list: {str(e)}")
+            raise e
+    
+    def search_points(self, client: QdrantClient, collection_name: str, query_vector: list[float], limit: int = 5) -> List[Dict]:
+        try:
+            Logger.info(f"Searching for points in collection '{collection_name}' with query: {query_vector[:5]}...")
 
+            # Check if collection exists
+            if not self._check_collection_exists(client, collection_name):
+                Logger.error(f"Collection '{collection_name}' does not exist")
+                raise ValueError(f"Collection {collection_name} does not exist")
+            
+            # Search for points in the collection
+            search_result = client.search(
+                collection_name=collection_name,
+                query_vector=query_vector,
+                limit=limit,
+                with_payload=True,
+                with_vectors=False
+            )
 
+            # Convert search results to list of dictionaries
+            results = [
+                {
+                    "id": str(hit.id),
+                    "question": hit.payload.get("question", ""),
+                    "answer": hit.payload.get("answer", ""),
+                    "score": hit.score
+                }
+                for hit in search_result
+            ]
+
+            Logger.info(f"Successfully found {len(results)} points in collection '{collection_name}'")
+            return results
+            
+        except Exception as e:
+            Logger.error(f"Error searching for points in collection '{collection_name}': {str(e)}")
+            raise e
