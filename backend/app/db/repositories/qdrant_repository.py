@@ -41,7 +41,9 @@ class QdrantRepository:
     def delete_collection(self, client: QdrantClient, collection_name: str) -> None:
         try:
             Logger.info(f"Attempting to delete collection '{collection_name}'")
-            self._check_collection_exists(client, collection_name)
+            if not self._check_collection_exists(client, collection_name):
+                Logger.error(f"Collection '{collection_name}' does not exist")
+                raise ValueError(f"Collection {collection_name} does not exist")
             client.delete_collection(collection_name)
             Logger.info(f"Collection '{collection_name}' successfully deleted")
         except Exception as e:
@@ -51,7 +53,9 @@ class QdrantRepository:
     def get_collection_info(self, client: QdrantClient, collection_name: str) -> dict:
         try:
             Logger.info(f"Getting information for collection '{collection_name}'")
-            self._check_collection_exists(client, collection_name)
+            if not self._check_collection_exists(client, collection_name):
+                Logger.error(f"Collection '{collection_name}' does not exist")
+                raise ValueError(f"Collection {collection_name} does not exist")
             collection_info = client.get_collection(collection_name)
             metadata = {
                 "name": collection_name,

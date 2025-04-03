@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, File, Form, UploadFile, Depends, Query
-from app.schemas.gestion_schemas import CreateFaqResponse, CreateFaqRequest, AddFaqItemResponse, AddFaqItemRequest, FaqImportResponse, FaqImportRequest, ReadFaqResponse
+from app.schemas.gestion_schemas import CreateFaqResponse, CreateFaqRequest, AddFaqItemResponse, AddFaqItemRequest, FaqImportResponse, FaqImportRequest, ReadFaqResponse, DeleteFaqResponse
 from app.services.gestion_service import GestionService
 import json
 from typing import Optional
@@ -125,5 +125,33 @@ def get_faq_items(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve FAQ items: {str(e)}"
+        )
+
+@router.delete("/faq/{faq_name}", response_model=DeleteFaqResponse)
+def delete_faq(faq_name: str):
+    """
+    Delete a FAQ collection.
+    
+    This endpoint permanently removes a FAQ collection and all its questions and answers.
+    The operation cannot be undone.
+    """
+    try:
+        result = gestion_service.delete_faq(faq_name)
+        
+        return DeleteFaqResponse(
+            message=f"Successfully deleted FAQ '{faq_name}' with {result['items_count']} items",
+            data=result
+        )
+    except ValueError as ve:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to delete FAQ: {str(ve)}"
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete FAQ: {str(e)}"
         )
 

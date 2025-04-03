@@ -75,3 +75,8 @@ class ReadFaqResponse(BaseResponse):
     data: List[FaqListItem] = Field(default_factory=list)
 
 
+class DeleteFaqResponse(BaseResponse):
+    """Response schema for deleting a FAQ collection"""
+    data: Dict = Field(default_factory=dict)
+
+

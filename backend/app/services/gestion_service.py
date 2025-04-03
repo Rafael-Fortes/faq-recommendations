@@ -238,3 +238,35 @@ class GestionService:
         except Exception as e:
             Logger.error(f"Error retrieving FAQ items: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Failed to retrieve FAQ items: {str(e)}")
+            
+    def delete_faq(self, faq_name: str) -> Dict[str, Any]:
+        """
+        Delete a FAQ collection
+        """
+        try:
+            Logger.info(f"Deleting FAQ collection '{faq_name}'")
+            
+            with get_qdrant_client() as client:                
+                # Get collection info before deletion for the response
+                collection_info = self.qdrant_repository.get_collection_info(client, faq_name)
+                
+                # Delete the collection
+                self.qdrant_repository.delete_collection(client, faq_name)
+                
+                Logger.info(f"Successfully deleted FAQ collection '{faq_name}'")
+                
+                # Return deletion result
+                result = {
+                    "faq_name": faq_name,
+                    "items_count": collection_info["points_count"],
+                    "status": "deleted"
+                }
+                
+                return result
+                
+        except ValueError as ve:
+            Logger.error(f"Value error in delete_faq: {str(ve)}")
+            raise ve
+        except Exception as e:
+            Logger.error(f"Error deleting FAQ collection: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to delete FAQ: {str(e)}")

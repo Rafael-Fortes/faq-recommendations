@@ -41,7 +41,7 @@ This document outlines the requirements for the FAQ Management functionality wit
 **Epic 4: FAQ Removal**
 
 *   As an administrator, I want to be able to select an FAQ to remove from the system.
-*   As an administrator, I want to receive a confirmation before removing an FAQ to avoid accidental deletions.
+*   As an administrator, I want to receive a confirmation if the FAQ was removed successfully.
 
 **Epic 5: FAQ Editing**
 
