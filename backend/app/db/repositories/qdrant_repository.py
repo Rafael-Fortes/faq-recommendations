@@ -157,16 +157,28 @@ class QdrantRepository:
             Logger.error(f"Error retrieving points from collection '{collection_name}': {str(e)}")
             raise e
         
-    def list_collections(self, client: QdrantClient) -> List[str]:
+    def list_collections(self, client: QdrantClient) -> List[Dict]:
         """
-        Get a list of all collection names
+        Get a list of all collections with their information
         """
         try:
             Logger.info("Retrieving list of all collections")
             collections = client.get_collections().collections
             collection_names = [collection.name for collection in collections]
-            Logger.info(f"Retrieved {len(collection_names)} collections")
-            return collection_names
+            
+            # Get detailed information for each collection
+            collections_info = []
+            for name in collection_names:
+                try:
+                    info = self.get_collection_info(client, name)
+                    collections_info.append(info)
+                    Logger.debug(f"Retrieved info for collection '{name}'")
+                except Exception as collection_error:
+                    Logger.error(f"Error retrieving info for collection '{name}': {str(collection_error)}")
+                    # Continue with other collections even if one fails
+            
+            Logger.info(f"Retrieved information for {len(collections_info)} collections")
+            return collections_info
         except Exception as e:
             Logger.error(f"Error retrieving collections list: {str(e)}")
             raise e

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, File, Form, UploadFile, Depends, Query
-from app.schemas.gestion_schemas import CreateFaqResponse, CreateFaqRequest, AddFaqItemResponse, AddFaqItemRequest, FaqImportResponse, FaqImportRequest, ReadFaqResponse, DeleteFaqResponse
+from app.schemas.gestion_schemas import CreateFaqResponse, CreateFaqRequest, AddFaqItemResponse, AddFaqItemRequest, FaqImportResponse, FaqImportRequest, ReadFaqResponse, DeleteFaqResponse, ListFaqsResponse, FaqCollectionInfo
 from app.services.gestion_service import GestionService
 import json
-from typing import Optional
+from typing import Optional, List
+from app.utils.logger import Logger
 
 router = APIRouter(tags=["Gestion"])
 
@@ -153,5 +154,27 @@ def delete_faq(faq_name: str):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to delete FAQ: {str(e)}"
+        )
+
+@router.get("/faqs", response_model=ListFaqsResponse)
+def list_faqs():
+    """
+    List all available FAQs
+    """
+    try:
+        Logger.info("Handling request to list all FAQs")
+        faqs = gestion_service.list_faqs()
+        
+        return ListFaqsResponse(
+            message=f"Successfully retrieved {len(faqs)} FAQs",
+            data=[FaqCollectionInfo(**faq) for faq in faqs]
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        Logger.error(f"Error listing FAQs: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to list FAQs: {str(e)}"
         )
 

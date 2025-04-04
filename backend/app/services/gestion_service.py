@@ -270,3 +270,19 @@ class GestionService:
         except Exception as e:
             Logger.error(f"Error deleting FAQ collection: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Failed to delete FAQ: {str(e)}")
+
+    def list_faqs(self) -> List[Dict[str, Any]]:
+        """
+        List all available FAQs
+        """
+        try:
+            Logger.info("Listing all available FAQs")
+            
+            with get_qdrant_client() as client:
+                collections_info = self.qdrant_repository.list_collections(client)
+                Logger.info(f"Retrieved {len(collections_info)} FAQs")
+                return collections_info
+                
+        except Exception as e:
+            Logger.error(f"Error listing FAQs: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Failed to list FAQs: {str(e)}")

@@ -80,3 +80,16 @@ class DeleteFaqResponse(BaseResponse):
     data: Dict = Field(default_factory=dict)
 
 
+class FaqCollectionInfo(BaseModel):
+    """Schema for FAQ collection information"""
+    name: str = Field(..., description="Name of the FAQ collection")
+    vector_size: int = Field(..., description="Size of the vector embeddings")
+    distance: str = Field(..., description="Distance metric used")
+    points_count: int = Field(..., description="Number of items in the collection")
+
+
+class ListFaqsResponse(BaseResponse):
+    """Response schema for listing all available FAQs"""
+    data: List[FaqCollectionInfo] = Field(default_factory=list)
+
+

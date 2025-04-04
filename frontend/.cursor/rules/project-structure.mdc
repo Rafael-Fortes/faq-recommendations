@@ -1,0 +1,73 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+**I. Project Structure**
+
+```
+project-name/
+├── public/          # Static assets (images, fonts, etc.)
+├── src/             # Source code
+│   ├── app/         # Next.js App Router (New)
+│   │   ├── layout.tsx     # Root layout
+│   │   ├── page.tsx       # Home page
+│   │   ├── _components/  # Shared UI components for the app
+│   │   ├── faq/           # FAQ related pages/routes
+│   │   │   ├── page.tsx   # List of FAQs
+│   │   │   ├── [id]/      # Dynamic route for single FAQ
+│   │   │   │   └── page.tsx
+│   │   ├── search/        # Search functionality
+│   │   │   └── page.tsx
+│   ├── components/    # Reusable UI components (Legacy - consider migrating to app/components)
+│   ├── contexts/      # React Contexts for state management
+│   ├── hooks/         # Custom React Hooks
+│   ├── lib/           # Utility functions, API clients, etc.
+│   │   ├── api.ts     # API client
+│   │   ├── utils.ts   # Utility functions
+│   ├── styles/        # Global styles, component-specific CSS modules
+│   │   ├── global.css   # Global CSS
+│   ├── types/         # TypeScript types
+│   │   ├── faq.d.ts   # Types related to FAQ data
+│   └── .env.local     # Environment variables
+├── .eslintrc.json   # ESLint configuration
+├── .prettierrc.json # Prettier configuration
+├── next.config.js   # Next.js configuration
+├── package.json     # Project dependencies
+├── README.md        # Project documentation
+└── tsconfig.json    # TypeScript configuration
+```
+
+**II. Core Principles and Practices**
+
+* **App Router (New) vs. Pages Router (Legacy):**
+    * Favor the `app/` router for new development. It offers improved data fetching, layouts, and component structure.
+    * If you have existing code, gradually migrate components from `components/` to `app/_components/` and pages from `pages/` to `app/`.
+* **Component-Based Architecture:**
+    * Build the UI with reusable React components.
+    * Follow a composition pattern: Small, single-purpose components compose larger, more complex ones.
+* **Data Fetching:**
+    * Use Next.js's built-in data fetching methods:
+        * `getServerSideProps` (Pages Router) - Server-side rendering (SSR)
+        * `getStaticProps` (Pages Router) - Static site generation (SSG)
+        * `useSWR` or `React Query` - Client-side data fetching
+        * `fetch` within server components (App Router)
+    * Choose the method based on your data's update frequency and SEO requirements.
+* **State Management:**
+    * Start with simple state management using React's `useState` and `useContext`.
+    * For complex global state, consider libraries like Redux, Zustand, or Jotai.
+* **Styling:**
+    * CSS Modules: For component-level styling to avoid conflicts.
+    * Tailwind CSS: For rapid UI development with utility classes.
+    * Styled Components: For CSS-in-JS (if preferred).
+* **Typescript:**
+    * Use TypeScript for static typing to improve code quality and prevent errors.
+    * Define types for your data and component props in the `types/` directory.
+* **Code Formatting and Linting:**
+    * Prettier: For consistent code formatting.
+    * ESLint: For identifying and fixing code quality issues.
+    * Configure these tools and integrate them into your workflow (e.g., pre-commit hooks).
+* **API Interactions:**
+    * Create an `api.ts` file in `lib/` to encapsulate API calls.
+    * Use a library like `axios` or `fetch` to make requests.
+    * Handle errors and loading states gracefully.

@@ -1,0 +1,774 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/faq": {
+      "post": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "Create Faq",
+        "description": "Create a new FAQ collection.",
+        "operationId": "create_faq_faq_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFaqRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateFaqResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq/{faq_name}/item": {
+      "post": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "Add Faq Item",
+        "description": "Add a new item (question and answer) to an existing FAQ collection.",
+        "operationId": "add_faq_item_faq__faq_name__item_post",
+        "parameters": [
+          {
+            "name": "faq_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Faq Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFaqItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFaqItemResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq/{faq_name}/import": {
+      "post": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "Import Faq From Csv",
+        "description": "Import FAQ items from a CSV file into an existing FAQ collection using Pandas for efficient batch processing.\nThe CSV file should have at least two columns named 'Question' and 'Answer'.",
+        "operationId": "import_faq_from_csv_faq__faq_name__import_post",
+        "parameters": [
+          {
+            "name": "faq_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Faq Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_faq_from_csv_faq__faq_name__import_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaqImportResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq/{faq_name}/items": {
+      "get": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "Get Faq Items",
+        "description": "Retrieve FAQ items from a specified FAQ collection.",
+        "operationId": "get_faq_items_faq__faq_name__items_get",
+        "parameters": [
+          {
+            "name": "faq_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Faq Name"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Maximum number of items to retrieve",
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to retrieve"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Number of items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadFaqResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faq/{faq_name}": {
+      "delete": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "Delete Faq",
+        "description": "Delete a FAQ collection.\n\nThis endpoint permanently removes a FAQ collection and all its questions and answers.\nThe operation cannot be undone.",
+        "operationId": "delete_faq_faq__faq_name__delete",
+        "parameters": [
+          {
+            "name": "faq_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Faq Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteFaqResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faqs": {
+      "get": {
+        "tags": [
+          "Gestion"
+        ],
+        "summary": "List Faqs",
+        "description": "List all available FAQs",
+        "operationId": "list_faqs_faqs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFaqsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "tags": [
+          "FAQ Search"
+        ],
+        "summary": "Search Faqs",
+        "description": "Search for FAQs based on a question",
+        "operationId": "search_faqs__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddFaqItemRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "answer"
+        ],
+        "title": "AddFaqItemRequest"
+      },
+      "AddFaqItemResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FaqItem"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "AddFaqItemResponse"
+      },
+      "Body_import_faq_from_csv_faq__faq_name__import_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_faq_from_csv_faq__faq_name__import_post"
+      },
+      "CreateFaqRequest": {
+        "properties": {
+          "faq_name": {
+            "type": "string",
+            "title": "Faq Name",
+            "description": "The name of the FAQ"
+          },
+          "distance": {
+            "$ref": "#/components/schemas/Distance",
+            "description": "The distance metric",
+            "default": "cosine"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_name"
+        ],
+        "title": "CreateFaqRequest"
+      },
+      "CreateFaqResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "CreateFaqResponse"
+      },
+      "DeleteFaqResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "DeleteFaqResponse",
+        "description": "Response schema for deleting a FAQ collection"
+      },
+      "Distance": {
+        "type": "string",
+        "enum": [
+          "cosine",
+          "euclidean"
+        ],
+        "title": "Distance"
+      },
+      "FaqCollectionInfo": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the FAQ collection"
+          },
+          "vector_size": {
+            "type": "integer",
+            "title": "Vector Size",
+            "description": "Size of the vector embeddings"
+          },
+          "distance": {
+            "type": "string",
+            "title": "Distance",
+            "description": "Distance metric used"
+          },
+          "points_count": {
+            "type": "integer",
+            "title": "Points Count",
+            "description": "Number of items in the collection"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "vector_size",
+          "distance",
+          "points_count"
+        ],
+        "title": "FaqCollectionInfo",
+        "description": "Schema for FAQ collection information"
+      },
+      "FaqImportData": {
+        "properties": {
+          "faq_name": {
+            "type": "string",
+            "title": "Faq Name"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "items_count": {
+            "type": "integer",
+            "title": "Items Count",
+            "default": 0
+          },
+          "failed_count": {
+            "type": "integer",
+            "title": "Failed Count",
+            "default": 0
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "completed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "faq_name",
+          "filename"
+        ],
+        "title": "FaqImportData"
+      },
+      "FaqImportResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FaqImportData"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "FaqImportResponse"
+      },
+      "FaqItem": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "embedding": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "answer"
+        ],
+        "title": "FaqItem"
+      },
+      "FaqListItem": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "answer"
+        ],
+        "title": "FaqListItem",
+        "description": "Schema for FAQ items without embeddings, for display purposes"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ListFaqsResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/FaqCollectionInfo"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ListFaqsResponse",
+        "description": "Response schema for listing all available FAQs"
+      },
+      "ReadFaqResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/FaqListItem"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "ReadFaqResponse",
+        "description": "Response schema for retrieving FAQ items"
+      },
+      "SearchRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question",
+            "description": "The question to search for"
+          },
+          "faq_name": {
+            "type": "string",
+            "title": "Faq Name",
+            "description": "The name of the FAQ to search in"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 50,
+            "minimum": 1,
+            "title": "Limit",
+            "description": "Maximum number of results to return",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "faq_name"
+        ],
+        "title": "SearchRequest",
+        "description": "Request schema for searching FAQs"
+      },
+      "SearchResponse": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "The message to be displayed to the user"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResultItem"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "List of search results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "SearchResponse",
+        "description": "Response schema for search results"
+      },
+      "SearchResultItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "ID of the FAQ item"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question",
+            "description": "The question from the FAQ"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer",
+            "description": "The answer from the FAQ"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score",
+            "description": "Similarity score (0-1)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "answer",
+          "score"
+        ],
+        "title": "SearchResultItem",
+        "description": "Represents a single search result item"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
