@@ -1,92 +1,124 @@
-# FAQ-Recommendations
+# FAQ Recommendations 🚀
+Welcome to the FAQ-Recommendations repository! This application leverages semantic search, a technique that goes beyond keyword matching to understand the meaning and context of a user's query, in order to find FAQs that are truly relevant. 🔍
 
-Bem-vindo ao repositório FAQ-Recommendations! Esta é uma aplicação no qual utiliza busca semântica para encontrar FAQs semelhantes a uma mensagem
+## Motivation 🎯
+Users often seek answers to their questions about a particular service, product, etc. In such cases, they turn to a FAQ, where they can quickly find solutions without needing to interact with a support agent. FAQs are an essential tool for providing efficient and self-service support, empowering users to find solutions to their problems independently and at their own pace. By automating the process of finding answers, we reduce the burden on support teams and improve customer satisfaction. 😃
 
-## Motivação
+## Challenge 🤯
+The challenge lies in analyzing a user's question and developing a system that can suggest relevant FAQs. This involves interpreting the meaning of the user's question and identifying FAQ questions that are semantically similar, even if the exact words don't match. 🤔
 
-### Cenário
-Um atendente inicia o atendimento no chat e conforme a conversa vai desenrolando ele entende qual a demanda e acessa à base de Perguntas Frequentes (FAQ) para pegar a resposta adequada
-para passar para o cliente (usuário do chat).
+## How the challenge was solved 💡
+We utilize transformer-based embeddings, such as those from the BERT or Sentence-BERT models, to transform FAQ questions and user questions into vector representations. This allows us to calculate the distance between these representations, enabling us to determine the similarity between the user's query and the FAQ questions. Embeddings capture the semantic relationships between words, and we use cosine similarity to measure the distance between these vectors, allowing the system to compare the meaning of questions rather than just their keywords. By using this approach, we can identify FAQ questions that are relevant to the user's query, even if they are phrased differently, thus ensuring that the user efficiently finds the information they seek. ✅
 
-### Desafio
-Analisando a conversa entre o atendente e o usuário (cliente), a tecnologia de IA consegue entender qual a demanda, busca automática na base de FAQ qual a resposta e **sugere** automaticamente
-para o atendente qual seria a resposta adequada para passar para o cliente.
+## Technologies Used 🛠️
 
-## Como o desafio foi solucionado
-Empregamos embeddings, nos quais transformamos as perguntas do FAQ e a mensagem do cliente em embeddings (representações de palavras em vetores). Isso nos permite avaliar a distância entre essas representações, possibilitando a obtenção da similaridade entre a mensagem do cliente e o FAQ.
+### Backend
+- **FastAPI**: Modern, high-performance web framework for building APIs with Python
+- **Sentence Transformers**: Library for state-of-the-art sentence embeddings
+- **Qdrant**: Vector database for efficient similarity search
+- **Poetry**: Dependency management and packaging
+- **Docker**: Containerization for easy deployment
+- **Uvicorn**: ASGI server for running the FastAPI application
 
-## Instalação
-### Requisitos
+### Frontend
+- **Next.js**: React framework for production-grade applications
+- **React**: JavaScript library for building user interfaces
+- **Tailwind CSS**: Utility-first CSS framework
+- **Axios**: Promise-based HTTP client for making API requests
+- **TypeScript**: Typed superset of JavaScript for improved developer experience
+- **Docker**: Containerization for consistent environments
 
-<table>
-  <tr>
-    <td>Python</td>
-    <td>Git</td>
-  </tr>
-  <tr>
-    <td>3.11.4 ></td>
-    <td>2.41.0</td>
-  </tr>
-</table>
+## Installation and Execution 🚀
 
-### Configurando o ambiente
+### Prerequisites
+- Docker and Docker Compose (for containerized setup)
+- Node.js 18+ (for frontend development)
+- Python 3.11+ (for backend development)
 
-1. Clone este repositório utilizando o comando `git clone https://github.com/Rafael-Fortes/faq-recommendations`
-2. Navegue até a pasta faq-recommendations utilizando o comando `cd faq-recommendations`
-3. Crie um ambiente virtual utilizando o comando `python -m venv venv`
-4. Ative o ambiente virtual utilizando o comando `./venv/scripts/activate`
-5. instale os requisitos utilizando o comando `pip install -r requirements.txt`
+### Option 1: Using Docker Compose (Recommended)
 
-### Baixando os Modelos necessários
-1. Utilize o comando `cd src/models` para navegar até a pasta models
-2. Execute o comando `python -m spacy download pt_core_news_sm` para baixar o modelo NLP para processamento de texto
-3. Utilize o comando `git clone https://huggingface.co/neuralmind/bert-large-portuguese-cased` para baixar o modelo de embeddings
+This method launches both the frontend and backend services together:
 
-## Executando a API
-1. Certifique-se de que o ambiente virtual está ativado
-2. Utilize o comando `cd src` para navegar até a pasta src
-3. Utilize o comando `uvicorn main:app` para iniciar a API que estará sendo executada na URL: http://127.0.0.1:8000/
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/faq-recommendations.git
+   cd faq-recommendations
+   ```
 
-### Como fazer requisições à API
-para fazer as requisições basta entrar na seguinte URL:`http://127.0.0.1:8000/get_similarities/{seu texto vai aqui}`, no qual será retornado um JSON com as recomendações do FAQ.
+2. Set up environment variables:
+   ```
+   cp backend/.env-example backend/.env
+   cp frontend/.env.example frontend/.env.local  # If needed
+   ```
 
-## Docker Compose Setup
+3. Start all services:
+   ```
+   docker compose up
+   ```
 
-The project can be run using Docker Compose, which will start all services together:
+4. Access the application:
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Documentation: http://localhost:8000/docs
 
-1. Frontend (Next.js)
-2. Backend (Python)
-3. Qdrant vector database
+### Option 2: Separate Development Setup
 
-### Running with Docker Compose (Production Mode)
+#### Backend Setup:
+1. Navigate to the backend directory:
+   ```
+   cd backend
+   ```
 
-```bash
-# Start all services
-docker compose up -d
+2. Install dependencies using Poetry:
+   ```
+   poetry install
+   poetry shell
+   ```
 
-# To rebuild containers after making changes
-docker compose up -d --build
+3. Start the backend server:
+   ```
+   uvicorn app.main:app --reload
+   ```
 
-# To stop all services
-docker compose down
+#### Frontend Setup:
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the development server:
+   ```
+   npm run dev
+   ```
+
+### Option 3: Individual Docker Containers
+
+#### Backend:
+```
+cd backend
+docker build -t faq-recommendations-backend .
+docker run -p 8000:8000 --env-file .env faq-recommendations-backend
 ```
 
-### Running with Docker Compose (Development Mode)
-
-For a development environment with hot reloading for both frontend and backend:
-
-```bash
-# Start all services in development mode
-docker compose -f docker-compose.dev.yml up -d
-
-# To rebuild containers after making changes
-docker compose -f docker-compose.dev.yml up -d --build
-
-# To stop all services
-docker compose -f docker-compose.dev.yml down
+#### Frontend:
+```
+cd frontend
+docker build -t faq-recommendations-frontend -f Dockerfile.dev .
+docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules faq-recommendations-frontend
 ```
 
-After running these commands, the services will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Qdrant: http://localhost:6333
+## Project Structure 📁
+
+- **frontend/**: Next.js application with React UI components
+- **backend/**: FastAPI application with vector search capabilities
+- **docs/**: Additional documentation and resources
+
+For more detailed information about each component, please refer to the README files in the respective directories.
+
+## Acknowledgements 🙏
+This challenge was proposed by Tech4humans at TechLab in 2023. I would like to thank Bruno Tanabe, with whom I collaborated to find a solution. 🤝

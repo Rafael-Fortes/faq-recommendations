@@ -1,83 +1,92 @@
 # FAQ Recommendations Frontend
 
-This is the frontend application for the FAQ Recommendations system, built with Next.js according to the requirements in the PRD.
+## Purpose
 
-## Features
+This is the frontend application for the FAQ Recommendations project. It provides a user interface for browsing, searching, and receiving personalized FAQ recommendations. Built with Next.js and React, it offers a modern, responsive interface to interact with the FAQ recommendation system.
 
-- **Header Display:** Application title with social media links (GitHub and LinkedIn)
-- **FAQ Search:** Select a FAQ collection, enter a question, and search for relevant answers
-- **FAQ Display:** View questions and answers with relevance indicators after search
-
-## Project Structure
-
-The project follows a well-organized structure:
+## Folder Structure
 
 ```
-faq-recommendations-frontend/
-├── public/          # Static assets
-├── src/             # Source code
-│   ├── app/         # Next.js App Router
-│   │   ├── layout.tsx     # Root layout with header and footer
-│   │   ├── page.tsx       # Main FAQ Recommendations page
-│   ├── components/    # Reusable UI components
-│   ├── contexts/      # React Contexts for state management
-│   ├── hooks/         # Custom React Hooks
-│   ├── lib/           # Utility functions, API clients
-│   │   ├── api.ts     # API client for backend communication
-│   │   ├── utils.ts   # Utility functions
-│   ├── styles/        # Global styles
-│   │   ├── global.css # Global CSS with Tailwind
-│   ├── types/         # TypeScript types
-│   │   ├── faq.d.ts   # Types related to FAQ data
+frontend/
+├── .next/               # Next.js build output
+├── .cursor/             # Cursor IDE configuration
+├── docs/                # Documentation files
+├── node_modules/        # Dependencies
+├── public/              # Static assets
+├── src/                 # Source code
+│   ├── app/             # Next.js app router pages
+│   ├── components/      # Reusable UI components
+│   ├── contexts/        # React context providers
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utility libraries
+│   ├── styles/          # Global styles
+│   └── types/           # TypeScript type definitions
+├── .dockerignore        # Files to exclude from Docker builds
+├── .env.local           # Environment variables
+├── .eslintrc.json       # ESLint configuration
+├── .gitignore           # Git ignore configuration
+├── .prettierrc.json     # Prettier configuration
+├── Dockerfile           # Production Docker configuration
+├── Dockerfile.dev       # Development Docker configuration
+├── next-env.d.ts        # Next.js TypeScript declarations
+├── next.config.js       # Next.js configuration
+├── package-lock.json    # Dependency lock file
+├── package.json         # Project metadata and scripts
+├── postcss.config.js    # PostCSS configuration
+├── tailwind.config.js   # Tailwind CSS configuration
+└── tsconfig.json        # TypeScript configuration
 ```
 
-## Backend API Integration
+## Installation and Execution
 
-The frontend integrates with the backend API documented in `openapi.json`, which provides:
+### Using npm
 
-- List of available FAQ collections
-- FAQ items for a selected collection
-- Search functionality based on user questions
+1. Install dependencies:
+   ```
+   npm install
+   ```
 
-## Getting Started
+2. Development mode:
+   ```
+   npm run dev
+   ```
+   This will start the development server at [http://localhost:3000](http://localhost:3000).
 
-First, install the dependencies:
+3. Build for production:
+   ```
+   npm run build
+   ```
 
-```bash
-npm install
-# or
-yarn install
-```
+4. Start production server:
+   ```
+   npm start
+   ```
 
-Then, run the development server:
+### Using Docker
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+#### Development Mode
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+1. Build the development Docker image:
+   ```
+   docker build -t faq-recommendations-frontend-dev -f Dockerfile.dev .
+   ```
 
-## Environment Variables
+2. Run the container:
+   ```
+   docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules --env-file .env.local faq-recommendations-frontend-dev
+   ```
+   This mounts your local directory to enable hot-reloading.
 
-You can configure the application with the following environment variables:
+#### Production Mode
 
-- `NEXT_PUBLIC_API_URL`: URL of the backend API (default: http://localhost:8000)
+1. Build the production Docker image:
+   ```
+   docker build -t faq-recommendations-frontend .
+   ```
 
-## Technologies Used
+2. Run the container:
+   ```
+   docker run -p 3000:3000 --env-file .env.local faq-recommendations-frontend
+   ```
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- Axios
-
-## Design System
-
-The application follows the design system specified in the styling guide, including:
-
-- Color palette with Primary Purple (#6400E4)
-- Typography using system fonts
-- Responsive design for various screen sizes
-- Accessibility features including proper focus states and semantic HTML
+The application will be available at [http://localhost:3000](http://localhost:3000).
