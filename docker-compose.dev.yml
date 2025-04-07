@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  # Frontend Next.js application
+  # Frontend Next.js application in development mode
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     environment:
@@ -16,10 +16,9 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - /app/.next
-    # For development, use the dev command instead of the build+start
-    # command: npm run dev
+    command: npm run dev
 
-  # Backend Python application
+  # Backend Python application in development mode
   backend:
     build:
       context: ./backend
@@ -31,8 +30,8 @@ services:
     depends_on:
       - qdrant
     volumes:
-      - ./backend/app:/app/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   # Qdrant vector database
   qdrant:

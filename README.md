@@ -49,3 +49,44 @@ Empregamos embeddings, nos quais transformamos as perguntas do FAQ e a mensagem 
 
 ### Como fazer requisições à API
 para fazer as requisições basta entrar na seguinte URL:`http://127.0.0.1:8000/get_similarities/{seu texto vai aqui}`, no qual será retornado um JSON com as recomendações do FAQ.
+
+## Docker Compose Setup
+
+The project can be run using Docker Compose, which will start all services together:
+
+1. Frontend (Next.js)
+2. Backend (Python)
+3. Qdrant vector database
+
+### Running with Docker Compose (Production Mode)
+
+```bash
+# Start all services
+docker compose up -d
+
+# To rebuild containers after making changes
+docker compose up -d --build
+
+# To stop all services
+docker compose down
+```
+
+### Running with Docker Compose (Development Mode)
+
+For a development environment with hot reloading for both frontend and backend:
+
+```bash
+# Start all services in development mode
+docker compose -f docker-compose.dev.yml up -d
+
+# To rebuild containers after making changes
+docker compose -f docker-compose.dev.yml up -d --build
+
+# To stop all services
+docker compose -f docker-compose.dev.yml down
+```
+
+After running these commands, the services will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- Qdrant: http://localhost:6333
